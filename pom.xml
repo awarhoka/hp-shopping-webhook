@@ -85,6 +85,7 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			<!--
 			<plugin>
 				<groupId>com.spotify</groupId>
 				<artifactId>docker-maven-plugin</artifactId>
@@ -93,8 +94,6 @@
 					<imageName>>${docker.image.prefix}/${project.artifactId}</imageName>
 					<baseImage>java:8</baseImage>
 					<entryPoint>["java", "-jar", "/${project.build.finalName}.jar"]</entryPoint>
-					<!-- copy the service's jar file from target into the root directory 
-						of the image -->
 					<resources>
 						<resource>
 							<targetPath>/</targetPath>
@@ -119,7 +118,7 @@
 						</resource>
 					</resources>
 				</configuration>
-			</plugin>
+			</plugin> -->
 		</plugins>
 	</build>
 </project>

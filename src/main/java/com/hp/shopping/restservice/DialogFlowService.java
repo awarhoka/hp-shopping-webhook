@@ -23,13 +23,14 @@ import com.hp.shopping.model.EmployeeModel;
  *
  */
 @RestController
+
 public class DialogFlowService {
 	
-    @PostMapping("test1t")
+    @PostMapping("/test")
     public WebhookResponse getTest1(WebhookRequest request) {
 
             System.out.println(request.toString());
-            return WebhookResponse.newBuilder().setFulfillmentText("Example reply 1 ").build();
+            return WebhookResponse.newBuilder().setFulfillmentText("How  Dialogflow !!").build();
 
     }
 	

@@ -5,9 +5,17 @@ package com.hp.shopping.restservice;
 
 import java.util.ArrayList;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.cloud.dialogflow.v2.WebhookRequest;
+import com.google.cloud.dialogflow.v2.WebhookResponse;
 import com.hp.shopping.model.EmployeeModel;
 
 /**
@@ -17,6 +25,14 @@ import com.hp.shopping.model.EmployeeModel;
 @RestController
 public class DialogFlowService {
 	
+    @PostMapping("test1t")
+    public WebhookResponse getTest1(WebhookRequest request) {
+
+            System.out.println(request.toString());
+            return WebhookResponse.newBuilder().setFulfillmentText("Example reply 1 ").build();
+
+    }
+	
 	/*@Autowired
 	private ResourceServerProperties ssoID;
 	
@@ -25,10 +41,88 @@ public class DialogFlowService {
 		System.out.println("User info URI : "+ssoID.getUserInfoUri()+"Client ID : "+ssoID.getClientId());
 		return new CustomUserInfoTokenServices(ssoID.getUserInfoUri(),ssoID.getClientId());
 	}*/
+	/*@PostMapping("test1t")
+	public String getTest1(HttpEntity<String> httpEntity) {
+
+	    String reqObject = httpEntity.getBody();
+	    System.out.println("request json object = "+reqObject);
+
+	    //Get the action
+	    
+	    JSONObject obj = new JSONObject(reqObject);
+	    String action = obj.getJSONObject("result").getString("action");
+
+	    //Get the parameters
+	    JSONObject params = obj.getJSONObject("result").getJSONObject("parameters");
+	    String response = "Hello from Java."; 
+	    return "{'speech': '"+response+"', 'fulfillmentText':'"+response+"'}";
+	}*/
 	
-	@RequestMapping(path="/hello")
-	public String helloWorld2() {
-		return "Hello World !!";
+	
+	@RequestMapping(value = "/hello_old ", method = RequestMethod.POST, produces = "application/json")
+	public ResponseEntity<String> helloWorld2() {
+		
+		String message1 ="{\r\n" + 
+				"  \"fulfillmentText\": \"This is a text response\",\r\n" + 
+				"  \"fulfillmentMessages\": [\r\n" + 
+				"    {\r\n" + 
+				"      \"card\": {\r\n" + 
+				"        \"title\": \"card title\",\r\n" + 
+				"        \"subtitle\": \"card text\",\r\n" + 
+				"        \"imageUri\": \"https://assistant.google.com/static/images/molecule/Molecule-Formation-stop.png\",\r\n" + 
+				"        \"buttons\": [\r\n" + 
+				"          {\r\n" + 
+				"            \"text\": \"button text\",\r\n" + 
+				"            \"postback\": \"https://assistant.google.com/\"\r\n" + 
+				"          }\r\n" + 
+				"        ]\r\n" + 
+				"      }\r\n" + 
+				"    }\r\n" + 
+				"  ],\r\n" + 
+				"  \"source\": \"example.com\",\r\n" + 
+				"  \"payload\": {\r\n" + 
+				"    \"google\": {\r\n" + 
+				"      \"expectUserResponse\": true,\r\n" + 
+				"      \"richResponse\": {\r\n" + 
+				"        \"items\": [\r\n" + 
+				"          {\r\n" + 
+				"            \"simpleResponse\": {\r\n" + 
+				"              \"textToSpeech\": \"this is a simple response\"\r\n" + 
+				"            }\r\n" + 
+				"          }\r\n" + 
+				"        ]\r\n" + 
+				"      }\r\n" + 
+				"    },\r\n" + 
+				"    \"facebook\": {\r\n" + 
+				"      \"text\": \"Hello, Facebook!\"\r\n" + 
+				"    },\r\n" + 
+				"    \"slack\": {\r\n" + 
+				"      \"text\": \"This is a text response for Slack.\"\r\n" + 
+				"    }\r\n" + 
+				"  },\r\n" + 
+				"  \"outputContexts\": [\r\n" + 
+				"    {\r\n" + 
+				"      \"name\": \"projects/${PROJECT_ID}/agent/sessions/${SESSION_ID}/contexts/context name\",\r\n" + 
+				"      \"lifespanCount\": 5,\r\n" + 
+				"      \"parameters\": {\r\n" + 
+				"        \"param\": \"param value\"\r\n" + 
+				"      }\r\n" + 
+				"    }\r\n" + 
+				"  ],\r\n" + 
+				"  \"followupEventInput\": {\r\n" + 
+				"    \"name\": \"event name\",\r\n" + 
+				"    \"languageCode\": \"en-US\",\r\n" + 
+				"    \"parameters\": {\r\n" + 
+				"      \"param\": \"param value\"\r\n" + 
+				"    }\r\n" + 
+				"  }\r\n" + 
+				"}";
+		
+		HttpHeaders headers = new HttpHeaders();
+	    headers.setContentType(MediaType.APPLICATION_JSON);
+	    ResponseEntity<String> entity = new ResponseEntity<String>(message1,headers, HttpStatus.OK);
+	    return entity;
+		
 	}
     
 	//@PreAuthorize("#oauth2.hasScope('test_read') and hasAuthority('ROLE_OPERATOR','USER')")

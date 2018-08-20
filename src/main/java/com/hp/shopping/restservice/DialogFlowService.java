@@ -10,10 +10,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2WebhookRequest;
+import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2WebhookResponse;
 import com.google.cloud.dialogflow.v2.WebhookRequest;
 import com.google.cloud.dialogflow.v2.WebhookResponse;
 import com.hp.shopping.model.EmployeeModel;
@@ -152,4 +155,11 @@ public class DialogFlowService {
 		employees.add(employee2);
 		return employees;
 	}
+	
+	@RequestMapping(method = RequestMethod.POST, path = "/fulfillment", consumes = MediaType.APPLICATION_JSON_VALUE)
+	public GoogleCloudDialogflowV2WebhookResponse getFulfillment(@RequestBody GoogleCloudDialogflowV2WebhookRequest request) {
+		System.out.println("How  Dialogflow !!");
+		return new GoogleCloudDialogflowV2WebhookResponse().setFulfillmentText("Hello World !!");
+	}
+
 }

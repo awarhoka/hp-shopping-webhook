@@ -26,17 +26,17 @@ import com.hp.shopping.model.EmployeeModel;
  *
  */
 @RestController
-
 public class DialogFlowService {
 	
-    @PostMapping("/test")
+	@RequestMapping(method = RequestMethod.POST, path = "/test", consumes = MediaType.APPLICATION_JSON_VALUE)
     public WebhookResponse getTest1(WebhookRequest request) {
 
-            System.out.println(request.toString());
+            System.out.println("Here is My request :"+request.toString());
             return WebhookResponse.newBuilder().setFulfillmentText("How  Dialogflow !!").build();
 
     }
 	
+    
 	/*@Autowired
 	private ResourceServerProperties ssoID;
 	
@@ -159,7 +159,17 @@ public class DialogFlowService {
 	@RequestMapping(method = RequestMethod.POST, path = "/fulfillment", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public GoogleCloudDialogflowV2WebhookResponse getFulfillment(@RequestBody GoogleCloudDialogflowV2WebhookRequest request) {
 		System.out.println("How  Dialogflow !!");
-		return new GoogleCloudDialogflowV2WebhookResponse().setFulfillmentText("Hello World !!");
+		GoogleCloudDialogflowV2WebhookResponse response =new GoogleCloudDialogflowV2WebhookResponse();
+		
+		response.setFulfillmentText("How  Dialogflow");
+		return response; 
 	}
+	
+	/*@RequestMapping(method = RequestMethod.POST, path = "/hello1", consumes = MediaType.APPLICATION_JSON_VALUE)
+	public WebhookResponse getResponse(WebhookRequest request) {
+		WebhookResponse response = WebhookResponse.getDefaultInstance();
+		Builder builder = response.newBuilder();
+		return response;
+	}*/
 
 }

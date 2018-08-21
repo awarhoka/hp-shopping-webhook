@@ -3,6 +3,7 @@
  */
 package com.hp.shopping.restservice;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.json.JSONException;
@@ -18,10 +19,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpResponse;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2WebhookRequest;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2WebhookResponse;
 import com.google.cloud.dialogflow.v2.WebhookRequest;
 import com.google.cloud.dialogflow.v2.WebhookResponse;
+import com.google.gson.JsonObject;
 import com.hp.shopping.model.EmployeeModel;
 
 /**
@@ -182,11 +186,35 @@ public class DialogFlowService {
 	    System.out.println("request json object = "+reqObject);
 
 	    //Get the action
+	    JSONObject obj = new JSONObject(reqObject);
 	    String action = obj.getJSONObject("queryResult").getString("action");
 	    System.out.println("request json object = "+action);
 	    //Get the parameters
 	    //JSONObject params = obj.getJSONObject("result").getJSONObject("parameters");
 	    String response = "Text defined in Dialogflow's console for the intent that was matched"; 
+	    
 	    return "{'fulfillmentText':'"+response+"'}";
 	}
+	
+	@PostMapping("/test3")
+	public HttpResponse getResponse(HttpRequest request) throws IOException {
+		HttpResponse response = request.execute();
+		//HttpHeaders headers = new HttpHeaders();
+	    //headers.setContentType(MediaType.APPLICATION_JSON);
+		System.out.println(response.getStatusCode());
+        return response;
+	}
+	
+	@RequestMapping(value="/test4", method=RequestMethod.POST)
+	public ResponseEntity<JsonObject> createUser(@RequestBody JsonObject request) throws JSONException{
+		HttpHeaders headers = new HttpHeaders();
+		
+	    headers.setContentType(MediaType.APPLICATION_JSON);
+	    JsonObject obj = request;
+	    
+	    obj.addProperty("fulfillmentText", "This is Text Response");
+	    ResponseEntity<JsonObject> entity = new ResponseEntity<JsonObject>(obj,headers,HttpStatus.OK);
+		return entity;
+	}
+	
 }

@@ -189,11 +189,12 @@ public class DialogFlowService {
 	    JSONObject obj = new JSONObject(reqObject);
 	    String action = obj.getJSONObject("queryResult").getString("action");
 	    System.out.println("request json object = "+action);
+	    
 	    //Get the parameters
 	    //JSONObject params = obj.getJSONObject("result").getJSONObject("parameters");
 	    String response = "Text defined in Dialogflow's console for the intent that was matched"; 
-	    
-	    return "{'fulfillmentText':'"+response+"'}";
+	    obj.append("fulfillmentText", response);
+	    return obj.toString();
 	}
 	
 	@PostMapping("/test3")

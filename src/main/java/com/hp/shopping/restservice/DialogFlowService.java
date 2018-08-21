@@ -27,6 +27,7 @@ import com.google.cloud.dialogflow.v2.WebhookRequest;
 import com.google.cloud.dialogflow.v2.WebhookResponse;
 import com.google.gson.JsonObject;
 import com.hp.shopping.model.EmployeeModel;
+import com.google.gson.Gson;
 
 /**
  * @author warhokar
@@ -34,110 +35,76 @@ import com.hp.shopping.model.EmployeeModel;
  */
 @RestController
 public class DialogFlowService {
-	
+
 	@RequestMapping(method = RequestMethod.POST, path = "/test", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public WebhookResponse getTest1(WebhookRequest request) {
+	public WebhookResponse getTest1(WebhookRequest request) {
 
-            System.out.println("Here is My request :"+request.toString());
-            return WebhookResponse.newBuilder().setFulfillmentText("How  Dialogflow !!").build();
+		System.out.println("Here is My request :" + request.toString());
+		return WebhookResponse.newBuilder().setFulfillmentText("How  Dialogflow !!").build();
 
-    }
-	
-    
-	/*@Autowired
-	private ResourceServerProperties ssoID;
-	
-	@Bean
-	public ResourceServerTokenServices customUserInfoTokenServices() {
-		System.out.println("User info URI : "+ssoID.getUserInfoUri()+"Client ID : "+ssoID.getClientId());
-		return new CustomUserInfoTokenServices(ssoID.getUserInfoUri(),ssoID.getClientId());
-	}*/
-	/*@PostMapping("test1t")
-	public String getTest1(HttpEntity<String> httpEntity) {
+	}
 
-	    String reqObject = httpEntity.getBody();
-	    System.out.println("request json object = "+reqObject);
+	/*
+	 * @Autowired private ResourceServerProperties ssoID;
+	 * 
+	 * @Bean public ResourceServerTokenServices customUserInfoTokenServices() {
+	 * System.out.println("User info URI : "+ssoID.getUserInfoUri()+"Client ID : "
+	 * +ssoID.getClientId()); return new
+	 * CustomUserInfoTokenServices(ssoID.getUserInfoUri(),ssoID.getClientId()); }
+	 */
+	/*
+	 * @PostMapping("test1t") public String getTest1(HttpEntity<String> httpEntity)
+	 * {
+	 * 
+	 * String reqObject = httpEntity.getBody();
+	 * System.out.println("request json object = "+reqObject);
+	 * 
+	 * //Get the action
+	 * 
+	 * JSONObject obj = new JSONObject(reqObject); String action =
+	 * obj.getJSONObject("result").getString("action");
+	 * 
+	 * //Get the parameters JSONObject params =
+	 * obj.getJSONObject("result").getJSONObject("parameters"); String response =
+	 * "Hello from Java."; return
+	 * "{'speech': '"+response+"', 'fulfillmentText':'"+response+"'}"; }
+	 */
 
-	    //Get the action
-	    
-	    JSONObject obj = new JSONObject(reqObject);
-	    String action = obj.getJSONObject("result").getString("action");
-
-	    //Get the parameters
-	    JSONObject params = obj.getJSONObject("result").getJSONObject("parameters");
-	    String response = "Hello from Java."; 
-	    return "{'speech': '"+response+"', 'fulfillmentText':'"+response+"'}";
-	}*/
-	
-	
 	@RequestMapping(value = "/hello_old ", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<String> helloWorld2() {
-		
-		String message1 ="{\r\n" + 
-				"  \"fulfillmentText\": \"This is a text response\",\r\n" + 
-				"  \"fulfillmentMessages\": [\r\n" + 
-				"    {\r\n" + 
-				"      \"card\": {\r\n" + 
-				"        \"title\": \"card title\",\r\n" + 
-				"        \"subtitle\": \"card text\",\r\n" + 
-				"        \"imageUri\": \"https://assistant.google.com/static/images/molecule/Molecule-Formation-stop.png\",\r\n" + 
-				"        \"buttons\": [\r\n" + 
-				"          {\r\n" + 
-				"            \"text\": \"button text\",\r\n" + 
-				"            \"postback\": \"https://assistant.google.com/\"\r\n" + 
-				"          }\r\n" + 
-				"        ]\r\n" + 
-				"      }\r\n" + 
-				"    }\r\n" + 
-				"  ],\r\n" + 
-				"  \"source\": \"example.com\",\r\n" + 
-				"  \"payload\": {\r\n" + 
-				"    \"google\": {\r\n" + 
-				"      \"expectUserResponse\": true,\r\n" + 
-				"      \"richResponse\": {\r\n" + 
-				"        \"items\": [\r\n" + 
-				"          {\r\n" + 
-				"            \"simpleResponse\": {\r\n" + 
-				"              \"textToSpeech\": \"this is a simple response\"\r\n" + 
-				"            }\r\n" + 
-				"          }\r\n" + 
-				"        ]\r\n" + 
-				"      }\r\n" + 
-				"    },\r\n" + 
-				"    \"facebook\": {\r\n" + 
-				"      \"text\": \"Hello, Facebook!\"\r\n" + 
-				"    },\r\n" + 
-				"    \"slack\": {\r\n" + 
-				"      \"text\": \"This is a text response for Slack.\"\r\n" + 
-				"    }\r\n" + 
-				"  },\r\n" + 
-				"  \"outputContexts\": [\r\n" + 
-				"    {\r\n" + 
-				"      \"name\": \"projects/${PROJECT_ID}/agent/sessions/${SESSION_ID}/contexts/context name\",\r\n" + 
-				"      \"lifespanCount\": 5,\r\n" + 
-				"      \"parameters\": {\r\n" + 
-				"        \"param\": \"param value\"\r\n" + 
-				"      }\r\n" + 
-				"    }\r\n" + 
-				"  ],\r\n" + 
-				"  \"followupEventInput\": {\r\n" + 
-				"    \"name\": \"event name\",\r\n" + 
-				"    \"languageCode\": \"en-US\",\r\n" + 
-				"    \"parameters\": {\r\n" + 
-				"      \"param\": \"param value\"\r\n" + 
-				"    }\r\n" + 
-				"  }\r\n" + 
-				"}";
-		
+
+		String message1 = "{\r\n" + "  \"fulfillmentText\": \"This is a text response\",\r\n"
+				+ "  \"fulfillmentMessages\": [\r\n" + "    {\r\n" + "      \"card\": {\r\n"
+				+ "        \"title\": \"card title\",\r\n" + "        \"subtitle\": \"card text\",\r\n"
+				+ "        \"imageUri\": \"https://assistant.google.com/static/images/molecule/Molecule-Formation-stop.png\",\r\n"
+				+ "        \"buttons\": [\r\n" + "          {\r\n" + "            \"text\": \"button text\",\r\n"
+				+ "            \"postback\": \"https://assistant.google.com/\"\r\n" + "          }\r\n"
+				+ "        ]\r\n" + "      }\r\n" + "    }\r\n" + "  ],\r\n" + "  \"source\": \"example.com\",\r\n"
+				+ "  \"payload\": {\r\n" + "    \"google\": {\r\n" + "      \"expectUserResponse\": true,\r\n"
+				+ "      \"richResponse\": {\r\n" + "        \"items\": [\r\n" + "          {\r\n"
+				+ "            \"simpleResponse\": {\r\n"
+				+ "              \"textToSpeech\": \"this is a simple response\"\r\n" + "            }\r\n"
+				+ "          }\r\n" + "        ]\r\n" + "      }\r\n" + "    },\r\n" + "    \"facebook\": {\r\n"
+				+ "      \"text\": \"Hello, Facebook!\"\r\n" + "    },\r\n" + "    \"slack\": {\r\n"
+				+ "      \"text\": \"This is a text response for Slack.\"\r\n" + "    }\r\n" + "  },\r\n"
+				+ "  \"outputContexts\": [\r\n" + "    {\r\n"
+				+ "      \"name\": \"projects/${PROJECT_ID}/agent/sessions/${SESSION_ID}/contexts/context name\",\r\n"
+				+ "      \"lifespanCount\": 5,\r\n" + "      \"parameters\": {\r\n"
+				+ "        \"param\": \"param value\"\r\n" + "      }\r\n" + "    }\r\n" + "  ],\r\n"
+				+ "  \"followupEventInput\": {\r\n" + "    \"name\": \"event name\",\r\n"
+				+ "    \"languageCode\": \"en-US\",\r\n" + "    \"parameters\": {\r\n"
+				+ "      \"param\": \"param value\"\r\n" + "    }\r\n" + "  }\r\n" + "}";
+
 		HttpHeaders headers = new HttpHeaders();
-	    headers.setContentType(MediaType.APPLICATION_JSON);
-	    ResponseEntity<String> entity = new ResponseEntity<String>(message1,headers, HttpStatus.OK);
-	    return entity;
-		
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		ResponseEntity<String> entity = new ResponseEntity<String>(message1, headers, HttpStatus.OK);
+		return entity;
+
 	}
-    
-	//@PreAuthorize("#oauth2.hasScope('test_read') and hasAuthority('ROLE_OPERATOR','USER')")
-	//@PreAuthorize("#oauth2.hasScope('test_read')")
+
+	// @PreAuthorize("#oauth2.hasScope('test_read') and
+	// hasAuthority('ROLE_OPERATOR','USER')")
+	// @PreAuthorize("#oauth2.hasScope('test_read')")
 	@RequestMapping("/employees")
 	public ArrayList<EmployeeModel> getEmployeeData() {
 		ArrayList<EmployeeModel> employees = new ArrayList<>();
@@ -162,60 +129,55 @@ public class DialogFlowService {
 		employees.add(employee2);
 		return employees;
 	}
-	
+
 	@RequestMapping(method = RequestMethod.POST, path = "/fulfillment", consumes = MediaType.APPLICATION_JSON_VALUE)
-	public GoogleCloudDialogflowV2WebhookResponse getFulfillment(@RequestBody GoogleCloudDialogflowV2WebhookRequest request) {
+	public GoogleCloudDialogflowV2WebhookResponse getFulfillment(
+			@RequestBody GoogleCloudDialogflowV2WebhookRequest request) {
 		System.out.println("How  Dialogflow !!");
-		GoogleCloudDialogflowV2WebhookResponse response =new GoogleCloudDialogflowV2WebhookResponse();
-		
+		GoogleCloudDialogflowV2WebhookResponse response = new GoogleCloudDialogflowV2WebhookResponse();
+
 		response.setFulfillmentText("How  Dialogflow");
-		return response; 
-	}
-	
-	/*@RequestMapping(method = RequestMethod.POST, path = "/hello1", consumes = MediaType.APPLICATION_JSON_VALUE)
-	public WebhookResponse getResponse(WebhookRequest request) {
-		WebhookResponse response = WebhookResponse.getDefaultInstance();
-		Builder builder = response.newBuilder();
 		return response;
-	}*/
-    
+	}
+
+	/*
+	 * @RequestMapping(method = RequestMethod.POST, path = "/hello1", consumes =
+	 * MediaType.APPLICATION_JSON_VALUE) public WebhookResponse
+	 * getResponse(WebhookRequest request) { WebhookResponse response =
+	 * WebhookResponse.getDefaultInstance(); Builder builder =
+	 * response.newBuilder(); return response; }
+	 */
+	private static final Gson gson = new Gson();
+
 	@PostMapping("/test2")
 	public String getTest1(HttpEntity<String> httpEntity) throws JSONException {
 
-	    String reqObject = httpEntity.getBody();
-	    System.out.println("request json object = "+reqObject);
+		String reqObject = httpEntity.getBody();
+		System.out.println("request json object = " + reqObject);
 
-	    //Get the action
-	    JSONObject obj = new JSONObject(reqObject);
-	    String action = obj.getJSONObject("queryResult").getString("action");
-	    System.out.println("request json object = "+action);
-	    
-	    //Get the parameters
-	    //JSONObject params = obj.getJSONObject("result").getJSONObject("parameters");
-	    String response = "Text defined in Dialogflow's console for the intent that was matched"; 
-	    obj.append("fulfillmentText", response);
-	    return obj.toString();
+		// Get the action
+		JSONObject obj = new JSONObject(reqObject);
+		String action = obj.getJSONObject("queryResult").getString("action");
+		System.out.println("request json object = " + action);
+		// Get the parameters
+		// JSONObject params = obj.getJSONObject("result").getJSONObject("parameters");
+		String response = "Text defined in Dialogflow's console for the intent that was matched";
+
+		return "{'fulfillmentText':'" + response + "'}";
 	}
-	
-	@PostMapping("/test3")
-	public HttpResponse getResponse(HttpRequest request) throws IOException {
-		HttpResponse response = request.execute();
-		//HttpHeaders headers = new HttpHeaders();
-	    //headers.setContentType(MediaType.APPLICATION_JSON);
-		System.out.println(response.getStatusCode());
-        return response;
+
+	@RequestMapping(value = "/test4", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	ResponseEntity<String> getTest3(HttpEntity<String> httpEntity) throws JSONException {
+		String reqObject = httpEntity.getBody();
+		System.out.println("request json object = " + reqObject);
+		JSONObject obj = new JSONObject(reqObject);
+		String action = obj.getJSONObject("queryResult").getString("action");
+		return ResponseEntity.ok(gson.toJson("This is a String"));
 	}
-	
-	@RequestMapping(value="/test4", method=RequestMethod.POST)
-	public ResponseEntity<JsonObject> createUser(@RequestBody JsonObject request) throws JSONException{
-		HttpHeaders headers = new HttpHeaders();
-		
-	    headers.setContentType(MediaType.APPLICATION_JSON);
-	    JsonObject obj = request;
-	    
-	    obj.addProperty("fulfillmentText", "This is Text Response");
-	    ResponseEntity<JsonObject> entity = new ResponseEntity<JsonObject>(obj,headers,HttpStatus.OK);
-		return entity;
+
+	@PostMapping("/test5")
+	public ResponseEntity<String> addWebHook(HttpEntity<String> httpEntity) {
+		String response = "Text defined in Dialogflow's console for the intent that was matched";
+		return new ResponseEntity<String>("{'fulfillmentText':'" + response + "'}", HttpStatus.OK);
 	}
-	
 }

@@ -1,4 +1,4 @@
-package com.hp.shopping.restservice;
+package com.hp.shopping.api;
 
 import java.security.Principal;
 

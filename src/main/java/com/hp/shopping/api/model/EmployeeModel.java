@@ -1,4 +1,4 @@
-package com.hp.shopping.model;
+package com.hp.shopping.api.model;
 
 public class EmployeeModel {
 

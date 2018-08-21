@@ -7,7 +7,7 @@
 	</configSuffixes>
 	<enableImports><![CDATA[false]]></enableImports>
 	<configs>
-		<config>java:com.hp.shopping.HpShoppingWebhookApplication</config>
+		<config>java:com.hp.shopping.api.HpShoppingWebhookApplication</config>
 	</configs>
 	<autoconfigs>
 	</autoconfigs>

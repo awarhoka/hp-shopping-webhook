@@ -3,7 +3,6 @@
  */
 package com.hp.shopping.restservice;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 import org.json.JSONException;
@@ -19,15 +18,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpResponse;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2WebhookRequest;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2WebhookResponse;
 import com.google.cloud.dialogflow.v2.WebhookRequest;
 import com.google.cloud.dialogflow.v2.WebhookResponse;
-import com.google.gson.JsonObject;
-import com.hp.shopping.model.EmployeeModel;
 import com.google.gson.Gson;
+import com.hp.shopping.model.EmployeeModel;
+
 
 /**
  * @author warhokar
@@ -176,8 +173,11 @@ public class DialogFlowService {
 	}
 
 	@PostMapping("/test5")
-	public ResponseEntity<String> addWebHook(HttpEntity<String> httpEntity) {
+	public ResponseEntity<String> addWebHook(HttpEntity<String> httpEntity) throws JSONException {
+		JSONObject obj = new JSONObject();
 		String response = "Text defined in Dialogflow's console for the intent that was matched";
-		return new ResponseEntity<String>("{'fulfillmentText':'" + response + "'}", HttpStatus.OK);
+		obj.put("fulfillmentText", response);
+		
+		return new ResponseEntity<String>(obj.toString(), HttpStatus.OK);
 	}
 }

@@ -5,6 +5,9 @@ package com.hp.shopping.restservice;
 
 import java.util.ArrayList;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -171,5 +174,19 @@ public class DialogFlowService {
 		Builder builder = response.newBuilder();
 		return response;
 	}*/
+    
+	@PostMapping("/test2")
+	public String getTest1(HttpEntity<String> httpEntity) throws JSONException {
 
+	    String reqObject = httpEntity.getBody();
+	    System.out.println("request json object = "+reqObject);
+
+	    //Get the action
+	    String action = obj.getJSONObject("queryResult").getString("action");
+	    System.out.println("request json object = "+action);
+	    //Get the parameters
+	    //JSONObject params = obj.getJSONObject("result").getJSONObject("parameters");
+	    String response = "Text defined in Dialogflow's console for the intent that was matched"; 
+	    return "{'fulfillmentText':'"+response+"'}";
+	}
 }

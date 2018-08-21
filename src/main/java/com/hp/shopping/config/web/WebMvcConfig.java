@@ -12,6 +12,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
  
 @Configuration
 @EnableWebMvc
@@ -26,8 +27,12 @@ public class WebMvcConfig implements WebMvcConfigurer {
      
     @Bean
     public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter() {
-        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-        converter.setObjectMapper(new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false));
+      
+    	ObjectMapper mapper = new ObjectMapper();
+    	mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+    	mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    			
+    	MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
         return converter;
     }     
      

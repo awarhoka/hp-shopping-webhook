@@ -68,6 +68,7 @@ public class DialogFlowRequestHandlerImpl implements DialogFlowRequestHandler {
 		synonyms1.add("Key 1  Synonym 2");
 		synonyms1.add("Key 1  Synonym 3");
 		info1.setSynonyms(synonyms1);
+		item1.setInfo(info1);
 		items.add(item1);
 		GoogleCloudDialogflowV2IntentMessageCarouselSelectItem item2 = new GoogleCloudDialogflowV2IntentMessageCarouselSelectItem();
 		item2.setTitle("Carousel Select Item2");
@@ -83,6 +84,8 @@ public class DialogFlowRequestHandlerImpl implements DialogFlowRequestHandler {
 		synonyms2.add("Key 2  Synonym 2");
 		synonyms2.add("Key 2  Synonym 3");
 		info2.setSynonyms(synonyms2);
+		
+		item2.setInfo(info2);
 		items.add(item2);
 		carouselSelect.setItems(items);
 		googleCloudDialogflowV2IntentMessage.setCarouselSelect(carouselSelect);

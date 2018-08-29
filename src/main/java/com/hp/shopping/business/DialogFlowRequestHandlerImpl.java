@@ -4,7 +4,9 @@
 package com.hp.shopping.business;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
@@ -90,7 +92,14 @@ public class DialogFlowRequestHandlerImpl implements DialogFlowRequestHandler {
 		carouselSelect.setItems(items);
 		googleCloudDialogflowV2IntentMessage.setCarouselSelect(carouselSelect);
 		fulfillmentMessages.add(googleCloudDialogflowV2IntentMessage);
-		response.setFulfillmentMessages(fulfillmentMessages);
+		
+		Map<String, Object> origionalRequestPayload = new HashMap<>();
+		origionalRequestPayload.put("source","facebook");	
+		origionalRequestPayload.put("data", carouselSelect);
+		//originalDetectIntentRequest.setPayload(origionalRequestPayload);
+		
+		response.setPayload(origionalRequestPayload);
+		//response.setFulfillmentMessages(fulfillmentMessages);
 		return response;
 	}
 

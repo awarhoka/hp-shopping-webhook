@@ -48,6 +48,7 @@ public class DialogFlowRequestHandlerImpl implements DialogFlowRequestHandler {
 			GoogleCloudDialogflowV2WebhookRequest dialogflowV2WebhookRequest) {
 		GoogleCloudDialogflowV2OriginalDetectIntentRequest origionalRequest =dialogflowV2WebhookRequest.getOriginalDetectIntentRequest();
 		GoogleCloudDialogflowV2QueryResult queryResult =dialogflowV2WebhookRequest.getQueryResult();
+		GoogleCloudDialogflowV2WebhookResponse response = new GoogleCloudDialogflowV2WebhookResponse();
 		if(null != origionalRequest && origionalRequest.size() > 0 ) {
 			switch (origionalRequest.getSource()) {
 			case "facebook" :
@@ -64,7 +65,8 @@ public class DialogFlowRequestHandlerImpl implements DialogFlowRequestHandler {
 							try {
 								UserProfile userProfile = messenger.queryUserProfile(senderID);
 								//messenger.send(payload)
-								System.out.println("USERINFO"+userProfile.firstName() +""+userProfile.lastName());
+								response.setFulfillmentText("Hello " +userProfile.firstName() +" Welcome Hp Shopping");
+								System.out.println("USERINFO"+userProfile.firstName());
 							} catch (MessengerApiException | MessengerIOException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
@@ -85,11 +87,11 @@ public class DialogFlowRequestHandlerImpl implements DialogFlowRequestHandler {
 			
 		}
 		
-		System.out.println(dialogflowV2WebhookRequest.toString());
-		GoogleCloudDialogflowV2WebhookResponse response = new GoogleCloudDialogflowV2WebhookResponse();
-		response.setFulfillmentText("Hello Dialogflow");
-		List<GoogleCloudDialogflowV2IntentMessage> fulfillmentMessages = new ArrayList<>();
-		GoogleCloudDialogflowV2IntentMessage googleCloudDialogflowV2IntentMessage = new GoogleCloudDialogflowV2IntentMessage();
+		//System.out.println(dialogflowV2WebhookRequest.toString());
+		
+		
+		//List<GoogleCloudDialogflowV2IntentMessage> fulfillmentMessages = new ArrayList<>();
+		//GoogleCloudDialogflowV2IntentMessage googleCloudDialogflowV2IntentMessage = new GoogleCloudDialogflowV2IntentMessage();
 		/*GoogleCloudDialogflowV2IntentMessageCard card = new GoogleCloudDialogflowV2IntentMessageCard();
 		
 		java.util.List<GoogleCloudDialogflowV2IntentMessageCardButton> buttons = new ArrayList<>();
@@ -103,7 +105,7 @@ public class DialogFlowRequestHandlerImpl implements DialogFlowRequestHandler {
 				"http://www.www8-hp.com/us/en/images/i_pro_02_probook_450_tcm245_2192435_tcm245_2193324_tcm245-2192435.jpg");
 		card.setSubtitle("This is Subtitle");
 		googleCloudDialogflowV2IntentMessage.setCard(card);*/
-		GoogleCloudDialogflowV2IntentMessageCarouselSelect carouselSelect = new GoogleCloudDialogflowV2IntentMessageCarouselSelect();
+		/*GoogleCloudDialogflowV2IntentMessageCarouselSelect carouselSelect = new GoogleCloudDialogflowV2IntentMessageCarouselSelect();
 		
 		List<GoogleCloudDialogflowV2IntentMessageCarouselSelectItem> items =new ArrayList<>();
 		GoogleCloudDialogflowV2IntentMessageCarouselSelectItem item1 = new GoogleCloudDialogflowV2IntentMessageCarouselSelectItem();
@@ -144,17 +146,16 @@ public class DialogFlowRequestHandlerImpl implements DialogFlowRequestHandler {
 		fulfillmentMessages.add(googleCloudDialogflowV2IntentMessage);
 		
 		Map<String, Object> origionalRequestPayload = new HashMap<>();
-		//origionalRequestPayload.put("source","facebook");	
 		Map<String, Object> data = new HashMap<>();
 		data.put("facebook", carouselSelect);
 		data.put("google", carouselSelect);
 		data.put("slack", carouselSelect);
-		origionalRequestPayload.put("data", data);
+		origionalRequestPayload.put("data", data);*/
 		
 		
 		//originalDetectIntentRequest.setPayload(origionalRequestPayload);
 		
-		response.setPayload(origionalRequestPayload);
+		//response.setPayload(origionalRequestPayload);
 		//response.setFulfillmentMessages(fulfillmentMessages);
 		return response;
 	}

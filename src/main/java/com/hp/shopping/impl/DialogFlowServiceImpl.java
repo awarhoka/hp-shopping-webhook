@@ -26,7 +26,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import com.hp.shopping.api.AppConstants;
 import com.hp.shopping.api.DialogFlowService;
-import com.hp.shopping.business.DialogFlowRequestHandler;
+import com.hp.shopping.business.hadler.DialogFlowRequestHandler;
 /*
 @author warhokar
 */

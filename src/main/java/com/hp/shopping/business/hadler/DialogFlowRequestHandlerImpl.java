@@ -1,24 +1,31 @@
 /**
  * 
  */
-package com.hp.shopping.business;
+package com.hp.shopping.business.hadler;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.github.messenger4j.Messenger;
+import com.github.messenger4j.exception.MessengerApiException;
+import com.github.messenger4j.exception.MessengerIOException;
+import com.github.messenger4j.userprofile.UserProfile;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2IntentMessage;
-import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2IntentMessageCard;
-import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2IntentMessageCardButton;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2IntentMessageCarouselSelect;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2IntentMessageCarouselSelectItem;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2IntentMessageImage;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2IntentMessageSelectItemInfo;
+import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2OriginalDetectIntentRequest;
+import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2QueryResult;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2WebhookRequest;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2WebhookResponse;
+import com.hp.shopping.api.AppConstants;
+import com.hp.shopping.api.model.Platform;
 
 /**
  * @author warhokar
@@ -26,7 +33,8 @@ import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2Webhoo
  */
 @Service(value = "DialogFlowRequestHandler")
 public class DialogFlowRequestHandlerImpl implements DialogFlowRequestHandler {
-
+    @Autowired
+  	private Messenger messenger;
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -38,6 +46,45 @@ public class DialogFlowRequestHandlerImpl implements DialogFlowRequestHandler {
 	@Override
 	public GoogleCloudDialogflowV2WebhookResponse handleDialogFlowV2Request(
 			GoogleCloudDialogflowV2WebhookRequest dialogflowV2WebhookRequest) {
+		GoogleCloudDialogflowV2OriginalDetectIntentRequest origionalRequest =dialogflowV2WebhookRequest.getOriginalDetectIntentRequest();
+		GoogleCloudDialogflowV2QueryResult queryResult =dialogflowV2WebhookRequest.getQueryResult();
+		if(null != origionalRequest && origionalRequest.size() > 0 ) {
+			switch (origionalRequest.getSource()) {
+			case "facebook" :
+				Map<String,Object> payload= origionalRequest.getPayload();
+				Map<String,Object> data = (Map<String,Object>)payload.get(AppConstants.DATA);
+				if(data.containsKey("postback")) {
+					Map<String,Object> postback = (Map<String,Object>)data.get("postback");
+					if(null != postback && postback.size() > 0) {
+						String payloadVal = (String)postback.get(AppConstants.PAYLOAD);
+						String titleVal = (String)postback.get("title");
+						if(payloadVal.equalsIgnoreCase("first-handshake") && titleVal.equals("Get Started")) {
+							Map<String,Object> sender = (Map<String,Object>)data.get("sender");
+							String senderID= (String)sender.get("id");
+							try {
+								UserProfile userProfile = messenger.queryUserProfile(senderID);
+								//messenger.send(payload)
+								System.out.println("USERINFO"+userProfile.firstName() +""+userProfile.lastName());
+							} catch (MessengerApiException | MessengerIOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}			
+						}
+					}
+
+				}
+				//final String querytext = queryResult.getQueryText();
+				break;
+			case "slack" :
+				break;
+			case "actions on google":
+				break;
+			case "google":
+				break;
+			}
+			
+		}
+		
 		System.out.println(dialogflowV2WebhookRequest.toString());
 		GoogleCloudDialogflowV2WebhookResponse response = new GoogleCloudDialogflowV2WebhookResponse();
 		response.setFulfillmentText("Hello Dialogflow");

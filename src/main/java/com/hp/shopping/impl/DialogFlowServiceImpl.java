@@ -1,24 +1,20 @@
 package com.hp.shopping.impl;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2IntentMessage;
-import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2IntentMessageCard;
-import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2IntentMessageCardButton;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2OriginalDetectIntentRequest;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2QueryResult;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2WebhookRequest;
@@ -40,10 +36,13 @@ public class DialogFlowServiceImpl implements DialogFlowService, AppConstants{
    @Autowired
    DialogFlowRequestHandler dialogFlowRequestHandler;
 	@Override
-	public GoogleCloudDialogflowV2WebhookResponse dialogflowFulfillmentV2(HttpServletRequest request) {
-	    final HttpHeaders httpHeaders= new HttpHeaders();
-	    httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-	    GoogleCloudDialogflowV2WebhookRequest dialogflowV2WebhookRequestObj = this.buildDialogFlowRequest(request);
+	//public GoogleCloudDialogflowV2WebhookResponse dialogflowFulfillmentV2(HttpServletRequest request) {
+	public GoogleCloudDialogflowV2WebhookResponse dialogflowFulfillmentV2(HttpEntity<String> httpEntity) {
+	    final HttpHeaders httpHeaders= httpEntity.getHeaders();
+	    System.out.println("Dialogflow Request Headers: "+ httpHeaders.toString());
+	    final String requestBody= httpEntity.getBody();
+	    System.out.println("Dialogflow Request Body : "+ requestBody);
+	    GoogleCloudDialogflowV2WebhookRequest dialogflowV2WebhookRequestObj = this.buildDialogFlowRequest(requestBody);
 	    return dialogFlowRequestHandler.handleDialogFlowV2Request(dialogflowV2WebhookRequestObj);
 	}
 	@Override
@@ -52,10 +51,10 @@ public class DialogFlowServiceImpl implements DialogFlowService, AppConstants{
 		return new GoogleCloudDialogflowV2WebhookResponse().setFulfillmentText("Hi There");
 	}
 	
-	private GoogleCloudDialogflowV2WebhookRequest buildDialogFlowRequest(HttpServletRequest request) {
+	private GoogleCloudDialogflowV2WebhookRequest buildDialogFlowRequest(String requestBody) {
 		GoogleCloudDialogflowV2WebhookRequest googleCloudDialogflowV2WebhookRequest =new GoogleCloudDialogflowV2WebhookRequest();
 		 try {
-			JsonObject reqJson = new JsonParser().parse(request.getReader()).getAsJsonObject();
+			JsonObject reqJson = new JsonParser().parse(requestBody).getAsJsonObject();
 			googleCloudDialogflowV2WebhookRequest.setResponseId(reqJson.get(RESPONSEID).getAsString());
 			googleCloudDialogflowV2WebhookRequest.setSession(reqJson.get(SESSION).getAsString());
 			googleCloudDialogflowV2WebhookRequest.setQueryResult(this.getGoogleCloudDialogflowV2QueryResult(reqJson.getAsJsonObject(QUERYRESULT)));
@@ -65,9 +64,6 @@ public class DialogFlowServiceImpl implements DialogFlowService, AppConstants{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (JsonSyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

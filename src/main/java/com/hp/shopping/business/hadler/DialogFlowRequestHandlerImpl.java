@@ -3,8 +3,6 @@
  */
 package com.hp.shopping.business.hadler;
 
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +16,7 @@ import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2Webhoo
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2WebhookResponse;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.hp.shopping.api.AppConstants;
 
 /**
@@ -47,10 +46,9 @@ public class DialogFlowRequestHandlerImpl implements DialogFlowRequestHandler {
 		if(null != origionalRequest && origionalRequest.size() > 0 ) {
 			switch (origionalRequest.getSource()) {
 			case "facebook" :
-				Map<String,Object> payload= origionalRequest.getPayload();
-				 JsonObject object = new JsonObject();
-				 JsonObject data = object.getAsJsonObject(gson.toJson(payload.get(AppConstants.DATA)));
-                
+				 String payloadString = gson.toJson(origionalRequest.getPayload());
+				 JsonObject payload =  new JsonParser().parse(payloadString).getAsJsonObject();
+				 JsonObject data = payload.get(AppConstants.DATA).getAsJsonObject();
 				if(data != null && data.size() > 0 ) {
 					JsonObject postback= data.get("postback").getAsJsonObject();
 					if(null != postback && postback.size() > 0) {

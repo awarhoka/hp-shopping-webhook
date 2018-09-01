@@ -43,7 +43,7 @@ public class DialogFlowRequestHandlerImpl implements DialogFlowRequestHandler {
 		response.setFulfillmentText("Hello Dialogflow");
 		List<GoogleCloudDialogflowV2IntentMessage> fulfillmentMessages = new ArrayList<>();
 		GoogleCloudDialogflowV2IntentMessage googleCloudDialogflowV2IntentMessage = new GoogleCloudDialogflowV2IntentMessage();
-		GoogleCloudDialogflowV2IntentMessageCard card = new GoogleCloudDialogflowV2IntentMessageCard();
+		/*GoogleCloudDialogflowV2IntentMessageCard card = new GoogleCloudDialogflowV2IntentMessageCard();
 		
 		java.util.List<GoogleCloudDialogflowV2IntentMessageCardButton> buttons = new ArrayList<>();
 		GoogleCloudDialogflowV2IntentMessageCardButton button = new GoogleCloudDialogflowV2IntentMessageCardButton();
@@ -55,7 +55,7 @@ public class DialogFlowRequestHandlerImpl implements DialogFlowRequestHandler {
 		card.setImageUri(
 				"http://www.www8-hp.com/us/en/images/i_pro_02_probook_450_tcm245_2192435_tcm245_2193324_tcm245-2192435.jpg");
 		card.setSubtitle("This is Subtitle");
-		googleCloudDialogflowV2IntentMessage.setCard(card);
+		googleCloudDialogflowV2IntentMessage.setCard(card);*/
 		GoogleCloudDialogflowV2IntentMessageCarouselSelect carouselSelect = new GoogleCloudDialogflowV2IntentMessageCarouselSelect();
 		
 		List<GoogleCloudDialogflowV2IntentMessageCarouselSelectItem> items =new ArrayList<>();
@@ -97,9 +97,14 @@ public class DialogFlowRequestHandlerImpl implements DialogFlowRequestHandler {
 		fulfillmentMessages.add(googleCloudDialogflowV2IntentMessage);
 		
 		Map<String, Object> origionalRequestPayload = new HashMap<>();
-		origionalRequestPayload.put("facebook", carouselSelect);
-		origionalRequestPayload.put("google", carouselSelect);
-		origionalRequestPayload.put("slack", carouselSelect);
+		//origionalRequestPayload.put("source","facebook");	
+		Map<String, Object> data = new HashMap<>();
+		data.put("facebook", carouselSelect);
+		data.put("google", carouselSelect);
+		data.put("slack", carouselSelect);
+		origionalRequestPayload.put("data", data);
+		
+		
 		//originalDetectIntentRequest.setPayload(origionalRequestPayload);
 		
 		response.setPayload(origionalRequestPayload);

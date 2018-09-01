@@ -3,9 +3,6 @@
  */
 package com.hp.shopping.business.hadler;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,17 +12,13 @@ import com.github.messenger4j.Messenger;
 import com.github.messenger4j.exception.MessengerApiException;
 import com.github.messenger4j.exception.MessengerIOException;
 import com.github.messenger4j.userprofile.UserProfile;
-import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2IntentMessage;
-import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2IntentMessageCarouselSelect;
-import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2IntentMessageCarouselSelectItem;
-import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2IntentMessageImage;
-import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2IntentMessageSelectItemInfo;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2OriginalDetectIntentRequest;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2QueryResult;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2WebhookRequest;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2WebhookResponse;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.hp.shopping.api.AppConstants;
-import com.hp.shopping.api.model.Platform;
 
 /**
  * @author warhokar
@@ -35,6 +28,8 @@ import com.hp.shopping.api.model.Platform;
 public class DialogFlowRequestHandlerImpl implements DialogFlowRequestHandler {
     @Autowired
   	private Messenger messenger;
+    
+    public static final Gson gson=new Gson(); 
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -53,15 +48,17 @@ public class DialogFlowRequestHandlerImpl implements DialogFlowRequestHandler {
 			switch (origionalRequest.getSource()) {
 			case "facebook" :
 				Map<String,Object> payload= origionalRequest.getPayload();
-				Map<String,Object> data = (Map<String,Object>)payload.get(AppConstants.DATA);
-				if(data.containsKey("postback")) {
-					Map<String,Object> postback = (Map<String,Object>)data.get("postback");
+				 JsonObject object = new JsonObject();
+				 JsonObject data = object.getAsJsonObject(gson.toJson(payload.get(AppConstants.DATA)));
+                
+				if(data != null && data.size() > 0 ) {
+					JsonObject postback= data.get("postback").getAsJsonObject();
 					if(null != postback && postback.size() > 0) {
-						String payloadVal = (String)postback.get(AppConstants.PAYLOAD);
-						String titleVal = (String)postback.get("title");
+						String payloadVal = postback.get(AppConstants.PAYLOAD).getAsString();
+						String titleVal =   postback.get("title").getAsString();;
 						if(payloadVal.equalsIgnoreCase("first-handshake") && titleVal.equals("Get Started")) {
-							Map<String,Object> sender = (Map<String,Object>)data.get("sender");
-							String senderID= (String)sender.get("id");
+							JsonObject sender= data.get("sender").getAsJsonObject();
+							String senderID= sender.get("id").getAsString();
 							try {
 								UserProfile userProfile = messenger.queryUserProfile(senderID);
 								//messenger.send(payload)

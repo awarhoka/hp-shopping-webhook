@@ -84,15 +84,39 @@ public class DialogFlowRequestHandlerImpl implements DialogFlowRequestHandler {
 							        
 								String firstName = userProfile.get("first_name").getAsString();
 							    String lastName = userProfile.get("last_name").getAsString() ; 
-								List<GoogleCloudDialogflowV2Context> outputContexts =new ArrayList<>();
-								GoogleCloudDialogflowV2Context welcomeContext =new GoogleCloudDialogflowV2Context();
+								
+							    
+							    List<GoogleCloudDialogflowV2Context> outputContexts =queryResult.getOutputContexts();
+							    GoogleCloudDialogflowV2Context welcomeintentcontext =null;
+							    for (GoogleCloudDialogflowV2Context googleCloudDialogflowV2Context : outputContexts) {
+							    	if(googleCloudDialogflowV2Context.getName().contains("welcomeintentcontext")) {
+							    		welcomeintentcontext=googleCloudDialogflowV2Context;
+							    		
+							    		break;
+							    	}
+								}
+							    outputContexts.remove(welcomeintentcontext);
+							    Map<String, Object> parameters = new HashMap<>();
+								parameters.put(senderID, firstName+" "+lastName);
+								welcomeintentcontext.setParameters(parameters);
+								outputContexts.add(welcomeintentcontext);
+								response.setOutputContexts(outputContexts);
+					    		
+							    /*if(null != outputContexts &&  outputContexts.size() >0 ) {
+							    	 GoogleCloudDialogflowV2Context context outputContexts.get(index);
+							    }
+							    for (GoogleCloudDialogflowV2Context googleCloudDialogflowV2Context : outputContexts) {
+							    	Map<String, Object> parameters = googleCloudDialogflowV2Context.getParameters();
+								}
+							    
+							    GoogleCloudDialogflowV2Context welcomeContext outputContexts.get(index);
 								welcomeContext.setName("WelcomeIntentContext");
 								welcomeContext.setLifespanCount(5);
 								Map<String, Object> parameters = new HashMap<>();
 								parameters.put(senderID, firstName+" "+lastName);
 								welcomeContext.setParameters(parameters);
 								outputContexts.add(welcomeContext);
-								response.setOutputContexts(outputContexts);
+								response.setOutputContexts(outputContexts);*/
 								response.setFulfillmentText("Hello " +firstName+" "+lastName+" Welcome Hp Shopping! How may i Help You?");
 								System.out.println("USERINFO :"+firstName+" "+lastName);
 							} catch (Exception e) {

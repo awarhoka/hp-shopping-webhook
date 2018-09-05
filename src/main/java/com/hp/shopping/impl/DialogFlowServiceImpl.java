@@ -81,7 +81,7 @@ public class DialogFlowServiceImpl implements DialogFlowService, AppConstants{
 		dialogflowV2QueryResult.setAllRequiredParamsPresent(queryResult.get(ALL_REQUIREF_PARAMS_PRESENT).getAsBoolean());
 		dialogflowV2QueryResult.setLanguageCode(queryResult.get(LANGUAGE_CODE).getAsString());
 		dialogflowV2QueryResult.setIntentDetectionConfidence(queryResult.get(INTENT_DETECT_CONFIDENCE).getAsFloat());
-		JsonArray outputContexts = queryResult.getAsJsonObject(OUTPUTCONTEXTS).getAsJsonArray();
+		JsonArray outputContexts = queryResult.getAsJsonArray(OUTPUTCONTEXTS);
 		List<GoogleCloudDialogflowV2Context> dialogFlowOutputContexts = new ArrayList<>();
 		if(null != outputContexts && outputContexts.size() >0 ) {
 			for (JsonElement jsonElement : outputContexts) {

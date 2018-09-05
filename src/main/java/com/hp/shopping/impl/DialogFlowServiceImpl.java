@@ -86,15 +86,19 @@ public class DialogFlowServiceImpl implements DialogFlowService, AppConstants{
 		if(null != outputContexts && outputContexts.size() >0 ) {
 			for (JsonElement jsonElement : outputContexts) {
 				 JsonObject object = jsonElement.getAsJsonObject();
+				 if(null != object && object.size() > 0) {
 				 GoogleCloudDialogflowV2Context dialogflowContext = new GoogleCloudDialogflowV2Context();
 				 dialogflowContext.setName(object.get("name").getAsString());
 				 dialogflowContext.setLifespanCount(object.get("lifespanCount").getAsInt());
-				 JsonObject paramObject = object.get("parameters").getAsJsonObject();
-				 Type listType = new TypeToken<Map<String, Object>>(){}.getType();
-				 String mapToJson = gson.toJson(paramObject);
-				 Map<String, Object> parameters = gson.fromJson(mapToJson, listType);
-				 dialogflowContext.setParameters(parameters);
+				 JsonObject paramObject = object.get("parameters") == null ? null :object.get("parameters").getAsJsonObject();
+				 if(null != paramObject && paramObject.size()> 0) {
+					 Type listType = new TypeToken<Map<String, Object>>(){}.getType();
+					 String mapToJson = gson.toJson(paramObject);
+					 Map<String, Object> parameters = gson.fromJson(mapToJson, listType);
+					 dialogflowContext.setParameters(parameters);
+				 }
 				 dialogFlowOutputContexts.add(dialogflowContext);
+				 }
 			}
 			dialogflowV2QueryResult.setOutputContexts(dialogFlowOutputContexts);
 		}

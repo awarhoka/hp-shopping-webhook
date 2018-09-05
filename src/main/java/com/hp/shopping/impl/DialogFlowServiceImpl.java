@@ -1,25 +1,28 @@
 package com.hp.shopping.impl;
 
-import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2Context;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2OriginalDetectIntentRequest;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2QueryResult;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2WebhookRequest;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2WebhookResponse;
+import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -43,6 +46,7 @@ public class DialogFlowServiceImpl implements DialogFlowService, AppConstants{
 	    final String requestBody= httpEntity.getBody();
 	    System.out.println("Dialogflow Request Body : "+ requestBody);
 	    GoogleCloudDialogflowV2WebhookRequest dialogflowV2WebhookRequestObj = this.buildDialogFlowRequest(requestBody);
+	    System.out.println("Generated Dialogflow Request OBJECT :"+dialogflowV2WebhookRequestObj);
 	    return dialogFlowRequestHandler.handleDialogFlowV2Request(dialogflowV2WebhookRequestObj);
 	}
 	@Override
@@ -77,6 +81,24 @@ public class DialogFlowServiceImpl implements DialogFlowService, AppConstants{
 		dialogflowV2QueryResult.setAllRequiredParamsPresent(queryResult.get(ALL_REQUIREF_PARAMS_PRESENT).getAsBoolean());
 		dialogflowV2QueryResult.setLanguageCode(queryResult.get(LANGUAGE_CODE).getAsString());
 		dialogflowV2QueryResult.setIntentDetectionConfidence(queryResult.get(INTENT_DETECT_CONFIDENCE).getAsFloat());
+		JsonArray outputContexts = queryResult.getAsJsonObject(OUTPUTCONTEXTS).getAsJsonArray();
+		List<GoogleCloudDialogflowV2Context> dialogFlowOutputContexts = new ArrayList<>();
+		if(null != outputContexts && outputContexts.size() >0 ) {
+			for (JsonElement jsonElement : outputContexts) {
+				 JsonObject object = jsonElement.getAsJsonObject();
+				 GoogleCloudDialogflowV2Context dialogflowContext = new GoogleCloudDialogflowV2Context();
+				 dialogflowContext.setName(object.get("name").getAsString());
+				 dialogflowContext.setLifespanCount(object.get("lifespanCount").getAsInt());
+				 JsonObject paramObject = object.get("parameters").getAsJsonObject();
+				 Type listType = new TypeToken<Map<String, Object>>(){}.getType();
+				 String mapToJson = gson.toJson(paramObject);
+				 Map<String, Object> parameters = gson.fromJson(mapToJson, listType);
+				 dialogflowContext.setParameters(parameters);
+				 dialogFlowOutputContexts.add(dialogflowContext);
+			}
+			dialogflowV2QueryResult.setOutputContexts(dialogFlowOutputContexts);
+		}
+		
 		return dialogflowV2QueryResult;
 	}
 	/**

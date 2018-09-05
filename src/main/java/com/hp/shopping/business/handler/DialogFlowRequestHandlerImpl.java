@@ -6,15 +6,15 @@ package com.hp.shopping.business.handler;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.github.messenger4j.Messenger;
-import com.github.messenger4j.exception.MessengerApiException;
-import com.github.messenger4j.exception.MessengerIOException;
-import com.github.messenger4j.userprofile.UserProfile;
+import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2Context;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2OriginalDetectIntentRequest;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2QueryResult;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2WebhookRequest;
@@ -61,7 +61,7 @@ public class DialogFlowRequestHandlerImpl implements DialogFlowRequestHandler {
 				 JsonObject payload =  new JsonParser().parse(payloadString).getAsJsonObject();
 				 JsonObject data = payload.get(AppConstants.DATA).getAsJsonObject();
 				if(data != null && data.size() > 0 ) {
-					JsonObject postback= data.get("postback").getAsJsonObject();
+					JsonObject postback= data.get("postback") == null ? null : data.get("postback").getAsJsonObject();
 					if(null != postback && postback.size() > 0) {
 						String payloadVal = postback.get(AppConstants.PAYLOAD).getAsString();
 						String titleVal =   postback.get("title").getAsString();;
@@ -84,13 +84,22 @@ public class DialogFlowRequestHandlerImpl implements DialogFlowRequestHandler {
 							        
 								String firstName = userProfile.get("first_name").getAsString();
 							    String lastName = userProfile.get("last_name").getAsString() ; 
-								response.setFulfillmentText("Hello " +firstName+" "+lastName+" Welcome Hp Shopping !!");
+								List<GoogleCloudDialogflowV2Context> outputContexts =new ArrayList<>();
+								GoogleCloudDialogflowV2Context welcomeContext =new GoogleCloudDialogflowV2Context();
+								welcomeContext.setName("WelcomeIntentContext");
+								Map<String, Object> parameters = new HashMap<>();
+								parameters.put(senderID, firstName+" "+lastName);
+								welcomeContext.setParameters(parameters);
+								outputContexts.add(welcomeContext);
+								response.setOutputContexts(outputContexts);
+								response.setFulfillmentText("Hello " +firstName+" "+lastName+" Welcome Hp Shopping! How may i Help You?");
 								System.out.println("USERINFO :"+firstName+" "+lastName);
 							} catch (Exception e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}			
 						}
+					}else {
 					}
 
 				}

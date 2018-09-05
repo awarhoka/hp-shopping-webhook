@@ -14,4 +14,5 @@ public interface AppConstants {
 	public String SOURCE = "source";
 	public String PAYLOAD = "payload";
 	public String DATA = "data";
+	public String OUTPUTCONTEXTS = "outputContexts";
 }

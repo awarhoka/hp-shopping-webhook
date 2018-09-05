@@ -1,9 +1,14 @@
 /**
  * 
  */
-package com.hp.shopping.business.hadler;
+package com.hp.shopping.business.handler;
+
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.net.URL;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.github.messenger4j.Messenger;
@@ -25,8 +30,14 @@ import com.hp.shopping.api.AppConstants;
  */
 @Service(value = "DialogFlowRequestHandler")
 public class DialogFlowRequestHandlerImpl implements DialogFlowRequestHandler {
-    @Autowired
-  	private Messenger messenger;
+    /*@Autowired
+  	private Messenger messenger;*/
+    
+    final String FB_GRAPH_API_URL_USER = "https://graph.facebook.com/%s?fields=first_name,last_name&access_token=%s";
+	 
+    
+    @Value("${messenger4j.pageAccessToken}") 
+    private String pageAccessToken;
     
     public static final Gson gson=new Gson(); 
 	/*
@@ -58,11 +69,24 @@ public class DialogFlowRequestHandlerImpl implements DialogFlowRequestHandler {
 							JsonObject sender= data.get("sender").getAsJsonObject();
 							String senderID= sender.get("id").getAsString();
 							try {
-								UserProfile userProfile = messenger.queryUserProfile(senderID);
-								//messenger.send(payload)
-								response.setFulfillmentText("Hello " +userProfile.firstName() +" Welcome Hp Shopping");
-								System.out.println("USERINFO"+userProfile.firstName());
-							} catch (MessengerApiException | MessengerIOException e) {
+								 String requestUrl = String.format(FB_GRAPH_API_URL_USER,senderID, pageAccessToken);
+								 URL newURL = new URL(requestUrl);
+								 System.out.println(requestUrl);
+							     ByteArrayOutputStream baos = new ByteArrayOutputStream();
+							     InputStream is = newURL.openStream();
+							     int r;
+							        while ((r = is.read()) != -1) {
+							            baos.write(r);
+							        }
+							        String fbresponse = new String(baos.toByteArray());
+							        JsonObject userProfile =  new JsonParser().parse(fbresponse).getAsJsonObject();
+							        baos.close();
+							        
+								String firstName = userProfile.get("first_name").getAsString();
+							    String lastName = userProfile.get("last_name").getAsString() ; 
+								response.setFulfillmentText("Hello " +firstName+" "+lastName+" Welcome Hp Shopping !!");
+								System.out.println("USERINFO :"+firstName+" "+lastName);
+							} catch (Exception e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}			

@@ -1,4 +1,4 @@
-package com.hp.shopping.business.hadler;
+package com.hp.shopping.business.handler;
 
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2WebhookRequest;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2WebhookResponse;

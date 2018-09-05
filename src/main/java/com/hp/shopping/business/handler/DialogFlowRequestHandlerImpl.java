@@ -87,6 +87,7 @@ public class DialogFlowRequestHandlerImpl implements DialogFlowRequestHandler {
 								List<GoogleCloudDialogflowV2Context> outputContexts =new ArrayList<>();
 								GoogleCloudDialogflowV2Context welcomeContext =new GoogleCloudDialogflowV2Context();
 								welcomeContext.setName("WelcomeIntentContext");
+								welcomeContext.setLifespanCount(5);
 								Map<String, Object> parameters = new HashMap<>();
 								parameters.put(senderID, firstName+" "+lastName);
 								welcomeContext.setParameters(parameters);
@@ -185,6 +186,7 @@ public class DialogFlowRequestHandlerImpl implements DialogFlowRequestHandler {
 		
 		//response.setPayload(origionalRequestPayload);
 		//response.setFulfillmentMessages(fulfillmentMessages);
+		System.out.println("This is generated response"+ response);
 		return response;
 	}
 

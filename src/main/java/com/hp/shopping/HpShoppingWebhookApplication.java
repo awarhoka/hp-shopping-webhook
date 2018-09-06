@@ -14,6 +14,7 @@ import com.github.messenger4j.Messenger;
 public class HpShoppingWebhookApplication {
 
 	public static void main(String[] args) {
+        System.setProperty("GOOGLE_APPLICATION_CREDENTIALS", "default-account-credentials.json");
 		SpringApplication.run(HpShoppingWebhookApplication.class, args);
 	}
 	

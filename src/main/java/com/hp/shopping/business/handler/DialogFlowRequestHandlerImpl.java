@@ -8,7 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -41,6 +43,9 @@ public class DialogFlowRequestHandlerImpl implements DialogFlowRequestHandler {
 
 	@Value("${messenger4j.pageAccessToken}")
 	private String pageAccessToken;
+	
+	@Autowired
+	Environment env;
 
 	public static final Gson gson = new Gson();
 
@@ -150,6 +155,8 @@ public class DialogFlowRequestHandlerImpl implements DialogFlowRequestHandler {
 					}else {
 					  //List<GoogleCloudDialogflowV2Context> outputContexts = queryResult.getOutputContexts();
 						//String session = dialogflowV2WebhookRequest.getSession();
+						System.out.println("GOOGLE_APPLICATION_CREDENTIALS :"+env.getProperty("GOOGLE_APPLICATION_CREDENTIALS"));
+						
 						String sessionId = dialogflowV2WebhookRequest.getSession().split("projects/bottestagent/agent/sessions/")[1];
 						String senderID= data.get("sender").getAsJsonObject().get("id").getAsString();
 						try (ContextsClient contextsClient = ContextsClient.create()) {

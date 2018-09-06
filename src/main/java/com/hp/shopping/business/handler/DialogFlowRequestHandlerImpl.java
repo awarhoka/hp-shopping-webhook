@@ -6,6 +6,7 @@ package com.hp.shopping.business.handler;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -18,7 +19,9 @@ import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2Origin
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2QueryResult;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2WebhookRequest;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2WebhookResponse;
-import com.google.cloud.dialogflow.v2.ContextName;
+import com.google.cloud.dialogflow.v2.Context;
+import com.google.cloud.dialogflow.v2.ContextsClient;
+import com.google.cloud.dialogflow.v2.SessionName;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -145,17 +148,27 @@ public class DialogFlowRequestHandlerImpl implements DialogFlowRequestHandler {
 							 */
 						}
 					}else {
-						//List<GoogleCloudDialogflowV2Context> outputContexts = queryResult.getOutputContexts();
-						String session = dialogflowV2WebhookRequest.getSession();
-						String sessionId = session.split("projects/bottestagent/agent/sessions/")[1];
-						System.out.println("sessionId :"+sessionId);
-						ContextName contextName = ContextName.of("bottestagent", sessionId, "welcomeintentcontext");
+					  //List<GoogleCloudDialogflowV2Context> outputContexts = queryResult.getOutputContexts();
+						//String session = dialogflowV2WebhookRequest.getSession();
+						String sessionId = dialogflowV2WebhookRequest.getSession().split("projects/bottestagent/agent/sessions/")[1];
 						String senderID= data.get("sender").getAsJsonObject().get("id").getAsString();
-						System.out.println("Context Details :"+ contextName.getContext() +" "+contextName.getFieldValuesMap().get(senderID));
-						if(null != contextName) {
-							Map<String,String> params= contextName.getFieldValuesMap();
-							response.setFulfillmentText(params.get(senderID));
-							}
+						try (ContextsClient contextsClient = ContextsClient.create()) {
+						      SessionName sessionName = SessionName.of("bottestagent", sessionId);
+						      // Performs the list contexts request
+						      System.out.format("Contexts for session %s:\n", sessionName.toString());
+						      for (Context context : contextsClient.listContexts(sessionName).iterateAll()) {
+						    	  if(context.getName().equals("welcomeintentcontext")) {
+						    		  for (Entry<String, com.google.protobuf.Value> entry : context.getParameters().getFieldsMap().entrySet()) {
+						    	          if(entry.getKey().equals(senderID)) {
+						    	        	  response.setFulfillmentText("Hello " +entry.getValue().toString()
+														+ " Welcome Hp Shopping! How may i Help You?");
+						    	          }
+						    	       }
+						          }
+						      }
+						    }catch (Exception e) {
+						    	e.printStackTrace();
+						    }
 					}
 				}
 				// final String querytext = queryResult.getQueryText();

@@ -18,6 +18,7 @@ import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2Origin
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2QueryResult;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2WebhookRequest;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2WebhookResponse;
+import com.google.cloud.dialogflow.v2.ContextName;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -84,14 +85,17 @@ public class DialogFlowRequestHandlerImpl implements DialogFlowRequestHandler {
 										+ " Welcome Hp Shopping! How may i Help You?");
 								System.out.println("USERINFO :" + firstName + " " + lastName);
 								List<GoogleCloudDialogflowV2Context> outputContexts = queryResult.getOutputContexts();
+								if(null != outputContexts && outputContexts.size() >0) {
 								GoogleCloudDialogflowV2Context dialogflowV2Context = new GoogleCloudDialogflowV2Context();
 								dialogflowV2Context.setName(dialogflowV2WebhookRequest.getSession() + "/contexts/welcomeintentcontext");
 								dialogflowV2Context.setLifespanCount(5);
 								Map<String, Object> parameters = new HashMap<>();
 								parameters.put(senderID, firstName + " " + lastName);
 								dialogflowV2Context.setParameters(parameters);
+								
 								outputContexts.add(dialogflowV2Context);
 								response.setOutputContexts(outputContexts);
+								}
 							}
 
 							/*
@@ -141,8 +145,16 @@ public class DialogFlowRequestHandlerImpl implements DialogFlowRequestHandler {
 							 */
 						}
 					}else {
-						List<GoogleCloudDialogflowV2Context> outputContexts = queryResult.getOutputContexts();
-						response.setFulfillmentText(outputContexts.toString());
+						//List<GoogleCloudDialogflowV2Context> outputContexts = queryResult.getOutputContexts();
+						String session = dialogflowV2WebhookRequest.getSession();
+						String sessionId = session.split("projects/bottestagent/agent/sessions/")[1];
+						System.out.println("sessionId :"+sessionId);
+						ContextName contextName = ContextName.of("bottestagent", sessionId, "welcomeintentcontext");
+						if(null != contextName) {
+							Map<String,String> params= contextName.getFieldValuesMap();
+							String senderID= data.get("sender").getAsJsonObject().get("id").getAsString();
+							response.setFulfillmentText(params.get(senderID));
+							}
 						}
 				}
 				// final String querytext = queryResult.getQueryText();

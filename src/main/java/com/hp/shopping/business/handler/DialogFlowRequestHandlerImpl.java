@@ -3,18 +3,12 @@
  */
 package com.hp.shopping.business.handler;
 
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
-import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2Context;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2OriginalDetectIntentRequest;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2QueryResult;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2WebhookRequest;
@@ -68,7 +62,21 @@ public class DialogFlowRequestHandlerImpl implements DialogFlowRequestHandler {
 						if(payloadVal.equalsIgnoreCase("first-handshake") && titleVal.equals("Get Started")) {
 							JsonObject sender= data.get("sender").getAsJsonObject();
 							String senderID= sender.get("id").getAsString();
-							try {
+							String requestUrl = String.format(FB_GRAPH_API_URL_USER,senderID, pageAccessToken);
+							ResponseEntity<String> responseEntity = new RestTemplate().getForEntity(requestUrl, String.class);
+							
+							if(null!= responseEntity && responseEntity.getStatusCode().equals(HttpStatus.OK)) {
+								JsonObject userProfile =  new JsonParser().parse(responseEntity.getBody()).getAsJsonObject();
+								System.out.println("Response Entity:   "+ userProfile);
+								String firstName = userProfile.get("first_name").getAsString();
+							    String lastName = userProfile.get("last_name").getAsString() ; 
+							    response.setFulfillmentText("Hello " +firstName+" "+lastName+" Welcome Hp Shopping! How may i Help You?");
+								System.out.println("USERINFO :"+firstName+" "+lastName);
+							}
+							
+							
+						    
+							/*try {
 								 String requestUrl = String.format(FB_GRAPH_API_URL_USER,senderID, pageAccessToken);
 								 URL newURL = new URL(requestUrl);
 								 System.out.println(requestUrl);
@@ -86,9 +94,9 @@ public class DialogFlowRequestHandlerImpl implements DialogFlowRequestHandler {
 							    String lastName = userProfile.get("last_name").getAsString() ; 
 								
 							    
-							    List<GoogleCloudDialogflowV2Context> outputContexts =queryResult.getOutputContexts();
-							    GoogleCloudDialogflowV2Context welcomeintentcontext =null;
-							    for (GoogleCloudDialogflowV2Context googleCloudDialogflowV2Context : outputContexts) {
+							    //List<GoogleCloudDialogflowV2Context> outputContexts =queryResult.getOutputContexts();
+							    //GoogleCloudDialogflowV2Context welcomeintentcontext =null;
+							    /*for (GoogleCloudDialogflowV2Context googleCloudDialogflowV2Context : outputContexts) {
 							    	if(googleCloudDialogflowV2Context.getName().contains("welcomeintentcontext")) {
 							    		welcomeintentcontext=googleCloudDialogflowV2Context;
 							    		
@@ -100,7 +108,7 @@ public class DialogFlowRequestHandlerImpl implements DialogFlowRequestHandler {
 								parameters.put(senderID, firstName+" "+lastName);
 								welcomeintentcontext.setParameters(parameters);
 								outputContexts.add(welcomeintentcontext);
-								response.setOutputContexts(outputContexts);
+								response.setOutputContexts(outputContexts);*/
 					    		
 							    /*if(null != outputContexts &&  outputContexts.size() >0 ) {
 							    	 GoogleCloudDialogflowV2Context context outputContexts.get(index);
@@ -116,13 +124,12 @@ public class DialogFlowRequestHandlerImpl implements DialogFlowRequestHandler {
 								parameters.put(senderID, firstName+" "+lastName);
 								welcomeContext.setParameters(parameters);
 								outputContexts.add(welcomeContext);
-								response.setOutputContexts(outputContexts);*/
-								response.setFulfillmentText("Hello " +firstName+" "+lastName+" Welcome Hp Shopping! How may i Help You?");
+								response.setOutputContexts(outputContexts);								response.setFulfillmentText("Hello " +firstName+" "+lastName+" Welcome Hp Shopping! How may i Help You?");
 								System.out.println("USERINFO :"+firstName+" "+lastName);
 							} catch (Exception e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
-							}			
+							}*/			
 						}
 					}else {
 					}

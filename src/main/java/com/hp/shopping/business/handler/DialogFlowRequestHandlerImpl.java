@@ -150,12 +150,13 @@ public class DialogFlowRequestHandlerImpl implements DialogFlowRequestHandler {
 						String sessionId = session.split("projects/bottestagent/agent/sessions/")[1];
 						System.out.println("sessionId :"+sessionId);
 						ContextName contextName = ContextName.of("bottestagent", sessionId, "welcomeintentcontext");
+						String senderID= data.get("sender").getAsJsonObject().get("id").getAsString();
+						System.out.println("Context Details :"+ contextName.getContext() +" "+contextName.getFieldValuesMap().get(senderID));
 						if(null != contextName) {
 							Map<String,String> params= contextName.getFieldValuesMap();
-							String senderID= data.get("sender").getAsJsonObject().get("id").getAsString();
 							response.setFulfillmentText(params.get(senderID));
 							}
-						}
+					}
 				}
 				// final String querytext = queryResult.getQueryText();
 				break;

@@ -153,13 +153,28 @@ public class DialogFlowRequestHandlerImpl implements DialogFlowRequestHandler {
 							 */
 						}
 					}else {
-					  //List<GoogleCloudDialogflowV2Context> outputContexts = queryResult.getOutputContexts();
+					  List<GoogleCloudDialogflowV2Context> outputContexts = queryResult.getOutputContexts();
+					  String senderID= data.get("sender").getAsJsonObject().get("id").getAsString();
+					  for (GoogleCloudDialogflowV2Context googleCloudDialogflowV2Context : outputContexts) {
+						  if(googleCloudDialogflowV2Context.getName().contains("WelcomeIntentContext")) {
+							  Map<String, Object> params =googleCloudDialogflowV2Context.getParameters();
+							  if(null !=params && params.size() > 0 ) {
+								  if(senderID != null) {
+									 String username = params.get(senderID) == null ? "Guest": params.get(senderID).toString();
+									  response.setFulfillmentText("Hi " +username+" Welcome Hp Shopping! How may i Help You?");
+								  }
+								 
+							  }
+						  }
+						  break;
+					}
+					  
 						//String session = dialogflowV2WebhookRequest.getSession();
-						System.out.println("GOOGLE_APPLICATION_CREDENTIALS :"+env.getProperty("GOOGLE_APPLICATION_CREDENTIALS"));
+						//System.out.println("GOOGLE_APPLICATION_CREDENTIALS :"+env.getProperty("GOOGLE_APPLICATION_CREDENTIALS"));
 						
-						String sessionId = dialogflowV2WebhookRequest.getSession().split("projects/bottestagent/agent/sessions/")[1];
-						String senderID= data.get("sender").getAsJsonObject().get("id").getAsString();
-						try (ContextsClient contextsClient = ContextsClient.create()) {
+						// sessionId = dialogflowV2WebhookRequest.getSession().split("projects/bottestagent/agent/sessions/")[1];
+						//String senderID= data.get("sender").getAsJsonObject().get("id").getAsString();
+						/*try (ContextsClient contextsClient = ContextsClient.create()) {
 						      SessionName sessionName = SessionName.of("bottestagent", sessionId);
 						      // Performs the list contexts request
 						      System.out.format("Contexts for session %s:\n", sessionName.toString());
@@ -175,7 +190,7 @@ public class DialogFlowRequestHandlerImpl implements DialogFlowRequestHandler {
 						      }
 						    }catch (Exception e) {
 						    	e.printStackTrace();
-						    }
+						    }*/
 					}
 				}
 				// final String querytext = queryResult.getQueryText();

@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 
+import org.dozer.classmap.generator.GeneratorUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -58,7 +59,12 @@ public class HpShoppingWebhookApplication {
                  
             }
         }
-        System.setProperty("GOOGLE_APPLICATION_CREDENTIALS", dir+"/default-account-credentials.json");
+        
+		
+		final File folder = new File(dir);
+		HpShoppingWebhookApplication obj = new HpShoppingWebhookApplication();
+		obj.listFilesForFolder(folder);
+		System.setProperty("GOOGLE_APPLICATION_CREDENTIALS", dir+"/default-account-credentials.json");
 		SpringApplication.run(HpShoppingWebhookApplication.class, args);
 	}
 	
@@ -68,4 +74,14 @@ public class HpShoppingWebhookApplication {
                                @Value("${messenger4j.verifyToken}") final String verifyToken) {
         return Messenger.create(pageAccessToken, appSecret, verifyToken);
     }
+	
+	public void listFilesForFolder(final File folder) {
+	    for (final File fileEntry : folder.listFiles()) {
+	        if (fileEntry.isDirectory()) {
+	            listFilesForFolder(fileEntry);
+	        } else {
+	            System.out.println("file path : 1"+fileEntry.getName()+" 2  "+fileEntry.getAbsolutePath()+" 3 "+fileEntry.getPath() +" 4 "+fileEntry.getPath());
+	        }
+	    }
+	}
 }

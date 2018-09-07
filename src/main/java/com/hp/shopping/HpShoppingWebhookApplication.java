@@ -1,5 +1,7 @@
 package com.hp.shopping;
 
+import java.net.URL;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -16,7 +18,10 @@ public class HpShoppingWebhookApplication {
 	public static void main(String[] args) {
         //System.setProperty("GOOGLE_APPLICATION_CREDENTIALS", "./default-account-credentials.json");
 		final String dir = System.getProperty("user.dir");
+		URL location = (HpShoppingWebhookApplication.class).getProtectionDomain().getCodeSource().getLocation();
         System.out.println("App current dir = " + dir);
+        System.out.println("Current File path :"+location.getPath());
+        System.out.println("Current File path :"+location.getFile());
         
 		SpringApplication.run(HpShoppingWebhookApplication.class, args);
 	}

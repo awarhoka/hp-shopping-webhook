@@ -155,8 +155,9 @@ public class DialogFlowRequestHandlerImpl implements DialogFlowRequestHandler {
 					}else {
 					  List<GoogleCloudDialogflowV2Context> outputContexts = queryResult.getOutputContexts();
 					  String senderID= data.get("sender").getAsJsonObject().get("id").getAsString();
+					  System.out.println("Sender Details from Data : "+senderID);
 					  for (GoogleCloudDialogflowV2Context googleCloudDialogflowV2Context : outputContexts) {
-						  if(googleCloudDialogflowV2Context.getName().contains("WelcomeIntentContext")) {
+						  if(googleCloudDialogflowV2Context.getName().contains("welcomeintentcontext")) {
 							  Map<String, Object> params =googleCloudDialogflowV2Context.getParameters();
 							  if(null !=params && params.size() > 0 ) {
 								  if(senderID != null) {
